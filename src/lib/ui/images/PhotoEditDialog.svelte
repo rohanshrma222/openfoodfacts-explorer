@@ -356,7 +356,7 @@
 		// Ensure image dimensions are available before processing
 		if (!imageNaturalDimensions) {
 			console.error('Image dimensions not available - cannot save crop data');
-			toast.error('Image not fully loaded. Please wait and try again.');
+			toast.error($_('product.edit.images.toast.not_loaded'));
 			return;
 		}
 
@@ -371,7 +371,7 @@
 		const cropData = createCropDataFromSelection(transformData);
 
 		if (!cropData) {
-			toast.warning('Please select a valid crop area.');
+			toast.warning($_('product.edit.images.toast.invalid_crop'));
 			return;
 		}
 
