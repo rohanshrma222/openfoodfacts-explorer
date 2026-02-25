@@ -4,12 +4,15 @@
 	import { _ } from '$lib/i18n';
 	import { NUTRIPATROL_URL } from '$lib/const';
 	import { resolve } from '$app/paths';
+	import { sanitizeHtml } from '$lib/utils/sanitize';
 
 	type Props = {
 		element: KnowledgeElementAction;
 		code?: string;
 	};
 	let { element, code: code }: Props = $props();
+
+	const sanitizedHtml = $derived(sanitizeHtml(element.action_element.html));
 
 	function requireCode() {
 		if (code == null) {
@@ -70,10 +73,8 @@
 	class={[element.action_element.html != '' && 'border-accent bg-accent/10 rounded border-s p-4']}
 >
 	{#if element.action_element.html != ''}
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		<div class="mb-4 text-sm">
-			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			{@html element.action_element.html}
+			{@html sanitizedHtml}
 		</div>
 	{/if}
 

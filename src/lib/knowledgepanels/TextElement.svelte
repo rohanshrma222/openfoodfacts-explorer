@@ -1,12 +1,15 @@
 <script lang="ts">
 	import type { KnowledgeElementText } from '$lib/api';
 	import { _ } from '$lib/i18n';
+	import { sanitizeHtml } from '$lib/utils/sanitize';
 
 	let { element }: { element: KnowledgeElementText } = $props();
 
 	let { type, edit_field_type, html, source_url, source_text, source_language } = $derived(
 		element.text_element
 	);
+
+	const sanitizedHtml = $derived(sanitizeHtml(html));
 </script>
 
 <div class="mb-2 flex items-center space-x-2">
@@ -22,13 +25,11 @@
 <!-- Specialization for ingredients_text -->
 {#if edit_field_type == 'ingredients_text'}
 	<div class="prose w-full max-w-full dark:text-white">
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html html}
+		{@html sanitizedHtml}
 	</div>
 {:else}
 	<div class="prose w-full max-w-full dark:text-white">
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html html}
+		{@html sanitizedHtml}
 	</div>
 {/if}
 
