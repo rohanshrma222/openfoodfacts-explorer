@@ -5,6 +5,10 @@ import type { PageLoad } from './$types';
 async function getNumberOfProducts(fetch: typeof window.fetch): Promise<number> {
 	const { fetch: wrappedFetch, url } = wrapFetchWithCredentials(fetch, new URL(API_HOST));
 	const res = await wrappedFetch(`${url}.json`);
+	if (!res.ok) {
+		console.error('Failed to fetch product count:', res.status, res.statusText);
+		return 0;
+	}
 	const data = await res.json();
 	return data?.count || 0;
 }
@@ -12,6 +16,10 @@ async function getNumberOfProducts(fetch: typeof window.fetch): Promise<number> 
 async function getNumberOfContributors(fetch: typeof window.fetch): Promise<number> {
 	const { fetch: wrappedFetch, url } = wrapFetchWithCredentials(fetch, new URL(API_HOST));
 	const res = await wrappedFetch(`${url}facets/contributors.json`);
+	if (!res.ok) {
+		console.error('Failed to fetch contributor count:', res.status, res.statusText);
+		return 0;
+	}
 	const data = await res.json();
 	return data?.count || 0;
 }
