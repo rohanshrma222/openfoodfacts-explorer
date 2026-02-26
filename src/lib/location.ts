@@ -62,8 +62,7 @@ export async function idToName(fetch: typeof window.fetch, id: number): Promise<
 	});
 
 	if (!response.ok) {
-		console.error('Failed to fetch location name:', response.status, response.statusText);
-		return 'Unknown';
+		throw new Error(`Failed to fetch location name: ${response.status} ${response.statusText}`);
 	}
 
 	const res = await response.json();
