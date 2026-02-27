@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setContext } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
 	import { Matomo } from '@sinnwerkstatt/sveltekit-matomo';
 
@@ -109,13 +109,10 @@
 
 	setContext('shortcuts', () => shortcuts);
 
-	// Load OpenFoodFacts Web Components - run once on client
-	let webComponentsLoaded = $state(false);
-	$effect(() => {
-		if (!webComponentsLoaded && typeof window !== 'undefined') {
-			webComponentsLoaded = true;
-			import('@openfoodfacts/openfoodfacts-webcomponents');
-		}
+	// Load OpenFoodFacts Web Components
+
+	onMount(async () => {
+		await import('@openfoodfacts/openfoodfacts-webcomponents');
 	});
 
 	// == Layout logic ==
@@ -124,13 +121,9 @@
 
 	let { children }: LayoutProps = $props();
 
-	// Inject speed insights once on client
-	let speedInsightsInjected = $state(false);
-	$effect(() => {
-		if (!speedInsightsInjected && typeof window !== 'undefined') {
-			speedInsightsInjected = true;
-			injectSpeedInsights();
-		}
+	onMount(() => {
+		// only inject the script on the client side
+		injectSpeedInsights();
 	});
 
 	function updateSearchQuery(url: URL) {
@@ -163,18 +156,12 @@
 
 	let config: HTMLElement;
 
-	// Run migrations once at module load
-	runPreferencesMigrations();
-
-	// Track locale changes - re-run when locale changes
-	let currentLocale: string | undefined;
-	$effect(() => {
+	onMount(() => {
+		runPreferencesMigrations();
 		const unsubscribe = locale.subscribe((locale) => {
-			if (locale !== currentLocale) {
-				currentLocale = locale;
-				const lang = locale?.split('-')[0]?.toLowerCase();
-				config?.setAttribute('language-code', lang ?? 'en');
-			}
+			const lang = locale?.split('-')[0]?.toLowerCase();
+
+			config.setAttribute('language-code', lang ?? 'en');
 		});
 		return () => {
 			unsubscribe();
